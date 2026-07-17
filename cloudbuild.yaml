@@ -69,6 +69,5 @@ substitutions:
   _CPU: '1'                           # CPU per instance
 
 # ─────────────────────────────────────────────────────
-#options:
-#  logging: CLOUD_LOGGING_ONLY
-#  machineType: 'E2_HIGHCPU_8'        # Lebih cepat untuk Docker build
+options:
+  logging: CLOUD_LOGGING_ONLY

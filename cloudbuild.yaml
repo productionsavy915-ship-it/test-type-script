@@ -61,7 +61,7 @@ images:
 # ─────────────────────────────────────────────────────
 substitutions:
   _REGION: asia-southeast2             # Jakarta region
-  _REPO: hello-world-repo             # Artifact Registry repository name
+  _REPO: vega-cloud-repo             # Artifact Registry repository name
   _SERVICE_NAME: hello-world-ts       # Cloud Run service name
   _MIN_INSTANCES: '0'                 # Scale-to-zero (hemat biaya)
   _MAX_INSTANCES: '5'                 # Max instances

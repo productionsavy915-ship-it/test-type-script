@@ -1,0 +1,8 @@
+# Ignore files that shouldn't be deployed to Cloud Run
+.git/
+.gitignore
+.editorconfig
+README.md
+docs/
+*.md
+node_modules/

@@ -6,7 +6,9 @@
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
-    "elysia": "latest"
+    "@google-cloud/secret-manager": "^6.2.0",
+    "elysia": "latest",
+    "ioredis": "^5.11.1"
   },
   "devDependencies": {
     "@types/bun": "latest",

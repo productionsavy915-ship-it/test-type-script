@@ -1,7 +1,7 @@
-import { Cluster } from "ioredis";
+import Redis from "ioredis";
 import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 
-let redisClient: Cluster | null = null;
+let redisClient: Redis | null = null;
 const secretManagerClient = new SecretManagerServiceClient();
 
 async function getSecret(name: string): Promise<string | undefined> {
@@ -22,7 +22,7 @@ async function getSecret(name: string): Promise<string | undefined> {
   }
 }
 
-export async function getRedisClient(): Promise<Cluster> {
+export async function getRedisClient(): Promise<Redis> {
   if (redisClient) {
     return redisClient;
   }
@@ -32,25 +32,27 @@ export async function getRedisClient(): Promise<Cluster> {
   let redisPort: string | undefined = process.env.REDIS_PORT;
   let redisUser: string | undefined = process.env.REDIS_USER;
   let redisPassword: string | undefined = process.env.REDIS_PASSWORD;
+  let redisTls: boolean = process.env.REDIS_TLS === "true";
 
   if (isCloudRun) {
     if (!redisHost) redisHost = await getSecret("REDIS_HOST");
     if (!redisPort) redisPort = await getSecret("REDIS_PORT");
     if (!redisUser) redisUser = await getSecret("REDIS_USER");
     if (!redisPassword) redisPassword = await getSecret("REDIS_PASSWORD");
+    // Jika di Cloud Run, kita asumsikan pakai TLS jika ada environment REDIS_TLS=true
+    // atau kamu juga bisa mengambil boolean ini dari Secret Manager jika diperlukan
   }
 
   if (!redisHost || !redisPort) {
     throw new Error("REDIS_HOST and REDIS_PORT are not configured. Please set them as environment variables or secrets.");
   }
 
-  const nodes = [{ host: redisHost, port: parseInt(redisPort, 10) }];
-
-  redisClient = new Cluster(nodes, {
-    redisOptions: {
-      ...(redisUser ? { username: redisUser } : {}),
-      ...(redisPassword ? { password: redisPassword } : {}),
-    },
+  redisClient = new Redis({
+    host: redisHost,
+    port: parseInt(redisPort, 10),
+    ...(redisUser ? { username: redisUser } : {}),
+    ...(redisPassword ? { password: redisPassword } : {}),
+    ...(redisTls ? { tls: {} } : {}),
   });
 
   return redisClient;

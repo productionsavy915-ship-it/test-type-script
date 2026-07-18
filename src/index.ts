@@ -22,7 +22,7 @@ const app = new Elysia()
       const redis = await getRedisClient();
       const pingResult = await redis.ping();
       return {
-        status: "healthy",
+        status: "healthy redis",
         redis: pingResult === "PONG" ? "connected" : "unknown",
       };
     } catch (error: any) {

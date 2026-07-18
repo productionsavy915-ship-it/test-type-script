@@ -35,6 +35,42 @@ const app = new Elysia()
       );
     }
   })
+  .get("/api_check", async () => {
+    const baseUrl = process.env.API_BASE_URL;
+    if (!baseUrl) {
+      return new Response(
+        JSON.stringify({ error: "API_BASE_URL is not configured in .env" }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    try {
+      const response = await fetch(`${baseUrl}/state-reply`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          topic: "SAVY/L37_01-L-LV-S-S-T2",
+        }),
+      });
+
+      const data = await response.text();
+      try {
+        return JSON.parse(data);
+      } catch {
+        return data;
+      }
+    } catch (error: any) {
+      return new Response(
+        JSON.stringify({
+          error: "Failed to fetch from external API",
+          details: error.message,
+        }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
+    }
+  })
   .listen(PORT);
 
 console.log(
